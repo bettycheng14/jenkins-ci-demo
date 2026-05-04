@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DIRECTORY_PATH = "/usr/src/app/my-code"
-        TESTING_ENVIRONMENT = "Staging_Server"
-        PRODUCTION_ENVIRONMENT = "Yuen Yi Cheng"
+        DIRECTORY_PATH = "/usr/src/app/nodejs-app"
+        STAGING_ENVIRONMENT = "Staging_Server"
+        PRODUCTION_ENVIRONMENT = "Production_Server"
     }
 
     stages {
@@ -12,40 +12,45 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Fetching source code from: ${env.DIRECTORY_PATH}"
-                echo "Compiling the code and generating artefacts..."
+                echo "Installing dependencies using npm..."
+                echo "Building application (npm run build)..."
             }
         }
 
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo "Running Unit Tests..."
-                echo "Running Integration Tests..."
+                echo "Running unit tests using Jest..."
+                echo "Running integration tests using Supertest..."
             }
         }
 
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
-                echo "Performing code quality analysis..."
+                echo "Performing code quality analysis using ESLint..."
             }
         }
 
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
-                echo "Deploying to testing environment: ${env.TESTING_ENVIRONMENT}"
+                echo "Running security scan using npm audit / Snyk..."
             }
         }
 
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                script {
-                    input message: "Approve deployment to Production?", ok: "Approve"
-                }
+                echo "Deploying application to ${env.STAGING_ENVIRONMENT} AWS EC2 server..."
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo "Running API tests on staging using Postman..."
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo "Deploying to production environment: ${env.PRODUCTION_ENVIRONMENT}"
+                echo "Deploying application to ${env.PRODUCTION_ENVIRONMENT}..."
             }
         }
     }
